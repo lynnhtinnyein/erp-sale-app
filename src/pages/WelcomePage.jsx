@@ -1,44 +1,62 @@
 import { Login } from "@mui/icons-material";
-import { Button, Paper, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import { Button, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import dummyProducts from "../dummy-data/dummyProducts";
+import ProductItem from "../components/ProductItem";
 
 const WelcomePage = () => {
+    const navigate = useNavigate();
+
+    const navigateToAdminPage = () => {
+        navigate('admin/login');
+    }
+
     return (
+        <Box
+            flexGrow={1}
+            display="flex"
+            flexDirection="column"
+        >
             <Box
+                padding={2}
                 display="flex"
-                flexGrow={1}
-                flexDirection="row"
-                justifyContent="center"
+                justifyContent="space-between"
                 alignItems="center"
+                borderBottom={1}
+                borderColor="lightgray"
             >
-                <Paper
-                    component={Stack}
-                    spacing={4}
-                    square={false}
-                    elevation={3}
-                    padding={4}
-                    width="100%"
-                    maxWidth={350}
+                <Typography color="primary" variant="h6">
+                    ERP Sale Demo
+                </Typography>
+                <Button
+                    variant="contained"
+                    endIcon={<Login/>}
+                    onClick={navigateToAdminPage}
                 >
-                    <Typography color="primary" typography="h4" align="center">
-                        ERP Sale Demo
-                    </Typography>
-                    <Box component={Stack} spacing={2} autoComplete="off">
-                        <Button
-                            variant="outlined"
-                            endIcon={<Login/>}
-                        >
-                            Lead Form Page
-                        </Button>
-                        <Button
-                            variant="contained"
-                            endIcon={<Login/>}
-                        >
-                            Admin Page
-                        </Button>
-                    </Box>                    
-                </Paper>
+                    Admin Page
+                </Button>
             </Box>
+            
+            <Box
+                flexGrow={1}
+                overflow="auto"
+            >
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    flexWrap="wrap"
+                >
+                    { dummyProducts.map( product => 
+                        <ProductItem
+                            key={product.id}
+                            {...product}
+                        />
+                    )}
+
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

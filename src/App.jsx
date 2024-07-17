@@ -1,7 +1,10 @@
 import { Box } from "@mui/system";
 import { RouterOutlet } from "./router";
+import { useEffect } from "react";
+import useWindowResize from "./hooks/useWindowResize";
 
 const App = () => {
+    useWindowResize();
 
     return (
         <Box
