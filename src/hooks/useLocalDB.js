@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import dummyData from "../dummy-data";
 
 const useLocalDB = () => {
@@ -11,14 +12,22 @@ const useLocalDB = () => {
             return id ? data.find( e => e.id.toString() === id) : data
         }
         
-        post(table, data){
+        post(table, newData){
             const storedData = JSON.parse(localStorage.getItem(table)) || [];
-            storedData.push(data);
+            storedData.push(newData);
             localStorage.setItem(table, JSON.stringify(storedData));
         }
 
-        put(){
+        put(url, newData){
+            const parts = url.split('/');
+            const table = parts[0];
+            const id = parts[1];
 
+            const storedData = JSON.parse(localStorage.getItem(table)) || [];
+            const targetItem = storedData.find( e => e.id.toString() === id);
+            const updatedItem = {...targetItem, ...newData};
+            const replacedData = storedData.map( e => e.id.toString() === id ? updatedItem : e );
+            localStorage.setItem(table, JSON.stringify(replacedData));
         }
 
         delete(url){
@@ -27,7 +36,7 @@ const useLocalDB = () => {
             const id = parts[1];
 
             const storedData = JSON.parse(localStorage.getItem(table)) || [];
-            const filteredData = storedData.filter( e => e.id.toString() != id );
+            const filteredData = storedData.filter( e => e.id.toString() !== id );
             localStorage.setItem(table, JSON.stringify(filteredData));
         }
 

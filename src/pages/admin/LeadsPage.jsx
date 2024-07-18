@@ -1,9 +1,9 @@
 import { Call, Email } from "@mui/icons-material";
-import { ButtonGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, ButtonGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import WarningMessages from "../../components/admin/WarningMessages";
 import useLocalDB from "../../hooks/useLocalDB";
 import { useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 const LeadsPage = () => {
     const DB = useLocalDB();
@@ -21,17 +21,26 @@ const LeadsPage = () => {
     //methods
         const markAsInterest = (leadId) => {
             const targetLead = leads.find( e => e.id === leadId );
-            DB.post('opportunities', targetLead);
+            DB.post('opportunities', {
+                id: uuid(),
+                ...targetLead
+            });
             DB.delete(`leads/${leadId}`);
-            fetchLeads()
+            fetchLeads();
         }
 
         const handleOnEmail = (leadId) => {
-            markAsInterest(leadId);
+            DB.put(`leads/${leadId}`, {
+                status: 'contacted'
+            });
+            fetchLeads();
         }
 
         const handleOnCall = (leadId) => {
-            markAsInterest(leadId);
+            DB.put(`leads/${leadId}`, {
+                status: 'contacted'
+            });
+            fetchLeads();
         }
 
     return (
@@ -48,13 +57,6 @@ const LeadsPage = () => {
                 </Typography>
             </Box>
 
-            <WarningMessages
-                padding={2}
-                messages={[
-                    'Note: In demo mode, the certain lead will be marked as "interested" when admin choose to email or call.'
-                ]}
-            />
-            
             <Box 
                 flexGrow={1} 
                 overflow="auto"
@@ -88,14 +90,20 @@ const LeadsPage = () => {
                                     Description
                                 </TableCell>
                                 <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                    Status
+                                </TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                    Contact
+                                </TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                     Actions
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {leads.map((row) => (
+                            {leads.map((row, index) => (
                                 <TableRow
-                                    key={row.id}
+                                    key={row.id + index}
                                     sx={{
                                         "&:last-child td, &:last-child th":
                                             { border: 0 }
@@ -126,6 +134,11 @@ const LeadsPage = () => {
                                         {row.description}
                                     </TableCell>
                                     <TableCell scope="row" align="right">
+                                        <Typography fontSize={13} color={row.status ? 'green' : 'error'}>
+                                            { row.status ?? 'New'}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell scope="row" align="right">
                                         <ButtonGroup
                                             display="flex"
                                         >
@@ -146,6 +159,16 @@ const LeadsPage = () => {
                                                 <Call />
                                             </IconButton>
                                         </ButtonGroup>
+                                    </TableCell>
+                                    <TableCell scope="row" align="right">
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            color="success"
+                                            onClick={() => markAsInterest(row.id)}
+                                        >
+                                            mark as interested
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

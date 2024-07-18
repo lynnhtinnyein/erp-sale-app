@@ -2,12 +2,16 @@ import { Box } from "@mui/system";
 import { RouterOutlet } from "./router";
 import useWindowResize from "./hooks/useWindowResize";
 import useLocalDB from "./hooks/useLocalDB";
+import { useEffect } from "react";
 
 const App = () => {
     const DB = useLocalDB();
-    DB.seed();
     useWindowResize();
 
+    useEffect( () => {
+        DB.seed();
+    },[]);
+    
     return (
         <Box
             display="flex"
