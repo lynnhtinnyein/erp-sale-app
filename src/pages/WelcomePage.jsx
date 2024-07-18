@@ -19,7 +19,6 @@ const WelcomePage = () => {
                         {...product}
                     />
                 )}
-
             </Box>
         </Box>
     );

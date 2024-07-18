@@ -1,17 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Middleware from "./Middlewares";
 import { v4 as uuid } from 'uuid';
-import DashboardRoot from "../components/admin/DashboardRoot";
 
-//public pages
 import WelcomePage from "../pages/WelcomePage";
 import LeadFormPage from "../pages/LeadFormPage";
 import ErrorPage from "../pages/ErrorPage";
-
-//admin pages 
+import DashboardPagesContainer from "../components/admin/DashboardPagesContainer"
 import LoginPage from "../pages/admin/LoginPage";
 import OpportunityManagementPage from "../pages/admin/OpportunityManagementPage";
 import DashboardPage from "../pages/admin/DashboardPage";
+import PublicPagesContainer from "../components/PublicPagesContainer";
 
 //routes registry
 const routes = {
@@ -59,34 +57,31 @@ const routes = {
     ]
 }
 
-const adminRoutesWithoutComponent = routes.admin.map( e => {
-    const { component, ...withoutComponent } = e;
-    return withoutComponent;
-});
-
 const RouterOutlet = () => {
     return (
         <Routes>
             { routes.public.map( (route, index) => 
-                <Route key={index} path={route.path} element={route.element} />
+                <Route key={index} path={route.path} element={<PublicPagesContainer>{route.element}</PublicPagesContainer>} />
             )}
-            <Route element={<Middleware.CheckAuth/>}>
-                { routes.admin.map( (route, index) =>
-                    route.requireAuth ? (
-                        <Route key={index} element={<Middleware.AuthGuard/>}>
-                            <Route path={route.path} element={<DashboardRoot>{route.element}</DashboardRoot>} />
-                        </Route>
-                    ) : (
-                        <Route key={index} element={<Middleware.NoAuthOnly/>}>
-                            <Route path={route.path} element={route.element} />
-                        </Route>
-                    )
-                )}
-            </Route>
-
+            { routes.admin.map( (route, index) =>
+                route.requireAuth ? (
+                    <Route key={index} element={<Middleware.AuthGuard/>}>
+                        <Route path={route.path} element={<DashboardPagesContainer>{route.element}</DashboardPagesContainer>} />
+                    </Route>
+                ) : (
+                    <Route key={index} element={<Middleware.NoAuthOnly/>}>
+                        <Route path={route.path} element={route.element} />
+                    </Route>
+                )
+            )}
             <Route path="*" element={<ErrorPage />} />
         </Routes>
     );
 }
 
-export { RouterOutlet, adminRoutesWithoutComponent };
+const dashboardDrawerRoutes = routes.admin.filter( route => route.requireAuth ).map( e => {
+    const { component, ...withoutComponent } = e;
+    return withoutComponent;
+});
+
+export { RouterOutlet, dashboardDrawerRoutes };
