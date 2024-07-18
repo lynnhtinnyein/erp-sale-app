@@ -7,7 +7,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const NavDrawer = ({ show, onClose }) => {
-    const { user } = useSelector( state => state.auth );
     const { isMobile } = useSelector( state => state.ui );
     const location = useLocation();
     const navigate = useNavigate();

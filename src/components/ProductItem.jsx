@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -102,4 +102,4 @@ const ProductItem = ({
     );
 };
 
-export default ProductItem;
+export default memo(ProductItem);

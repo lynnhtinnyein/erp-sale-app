@@ -6,7 +6,9 @@ import WelcomePage from "../pages/WelcomePage";
 import LeadFormPage from "../pages/LeadFormPage";
 import ErrorPage from "../pages/ErrorPage";
 import DashboardPagesContainer from "../components/admin/DashboardPagesContainer"
+
 import LoginPage from "../pages/admin/LoginPage";
+import LeadsPage from "../pages/admin/LeadsPage";
 import OpportunityManagementPage from "../pages/admin/OpportunityManagementPage";
 import DashboardPage from "../pages/admin/DashboardPage";
 import PublicPagesContainer from "../components/PublicPagesContainer";
@@ -44,6 +46,14 @@ const routes = {
             path: '/admin/dashboard',
             title: 'Dashboard',
             element: <DashboardPage/>,
+            requireAuth: true
+        },
+        {
+            id: uuid(),
+            name: 'Leads',
+            path: '/admin/leads',
+            title: 'Leads',
+            element: <LeadsPage/>,
             requireAuth: true
         },
         {

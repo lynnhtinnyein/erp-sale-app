@@ -1,8 +1,11 @@
 import { Box } from "@mui/system";
-import dummyProducts from "../dummy-data/dummyProducts";
 import ProductItem from "../components/ProductItem";
+import useLocalDB from "../hooks/useLocalDB";
 
 const WelcomePage = () => {
+    const DB = useLocalDB();
+    const products = DB.get('inventory');
+
     return (
         <Box
             flexGrow={1}
@@ -13,7 +16,7 @@ const WelcomePage = () => {
                 flexDirection="row"
                 flexWrap="wrap"
             >
-                { dummyProducts.map( product => 
+                { products.map( product => 
                     <ProductItem
                         key={product.id}
                         {...product}

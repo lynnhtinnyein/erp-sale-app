@@ -1,9 +1,11 @@
 import { Box } from "@mui/system";
 import { RouterOutlet } from "./router";
-import { useEffect } from "react";
 import useWindowResize from "./hooks/useWindowResize";
+import useLocalDB from "./hooks/useLocalDB";
 
 const App = () => {
+    const DB = useLocalDB();
+    DB.seed();
     useWindowResize();
 
     return (

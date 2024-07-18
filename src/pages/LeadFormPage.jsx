@@ -1,10 +1,12 @@
-import { Button, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Button, FormControlLabel, Radio, RadioGroup, TextField, TextareaAutosize, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
+import { v4 as uuid } from 'uuid';
+import useLocalDB from "../hooks/useLocalDB";
 
 const defaultInputs = { 
     name: '', 
@@ -12,12 +14,15 @@ const defaultInputs = {
     email: '',
     companyName: '',
     description: '',
+    type: '',
     date: null
 }
 
 const LeadFormPage = () => {
+    const DB = useLocalDB();
     const { state } = useLocation();
     const productId = state?.id;  
+    const product = DB.get(`inventory/${productId}`);
 
     const [inputs, setInputs] = useState(defaultInputs);
     const [errorCheckable, setErrorCheckable] = useState(false);
@@ -37,9 +42,15 @@ const LeadFormPage = () => {
             const hasEmptyInput = !inputs.name || !inputs.phone || !inputs.email || !inputs.companyName || !inputs.date;
             
             if(!hasEmptyInput){
-                const storedLeads = JSON.parse(localStorage.getItem('leads')) || [];
-                storedLeads.push(inputs);
-                localStorage.setItem("leads", JSON.stringify(storedLeads));
+                const newLead = {
+                    ...inputs, 
+                    id: uuid(),
+                    productId
+                };
+                
+                DB.post('leads', newLead )
+
+                //success msges
                 setInputs(defaultInputs);
                 alert("Submitted! Thank you for making appointment. We will contact you ASAP.");
                 setErrorCheckable(false);
@@ -60,11 +71,11 @@ const LeadFormPage = () => {
                 overflow="auto"
             >
                 <Typography variant="h3" textAlign="center">
-                    Appointment
+                    { product.name }
                 </Typography>
 
                 <Typography color="gray" textAlign="center">
-                    Please fill your information to make an appointment for demo.
+                    Please fill out your information to inquire about this product.
                 </Typography>
 
                 <Box 
@@ -130,6 +141,16 @@ const LeadFormPage = () => {
                         name="description"
                         onChange={handleChange}
                     />
+                    <RadioGroup
+                        row
+                        name="type"
+                        value={inputs.type}
+                        onChange={handleChange}
+                    >
+                        <FormControlLabel value="appointment" control={<Radio />} label="Demo Appointment" />
+                        <FormControlLabel value="price_enquiry" control={<Radio />} label="Price Enquiry" />
+                        <FormControlLabel value="service_enquiry" control={<Radio />} label="Service Enquiry" />
+                    </RadioGroup>
                 </Box>
                 
                 <Button

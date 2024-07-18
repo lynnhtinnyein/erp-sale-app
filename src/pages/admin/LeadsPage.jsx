@@ -5,22 +5,25 @@ import WarningMessages from "../../components/admin/WarningMessages";
 import useLocalDB from "../../hooks/useLocalDB";
 import { useEffect, useState } from "react";
 
-const OpportunityManagementPage = () => {
+const LeadsPage = () => {
     const DB = useLocalDB();
 
-    const [opportunities, setOpportunities] = useState([]);
+    const [leads, setLeads] = useState([]);
 
-    const fetchOpportunities = () => {
-        setOpportunities(DB.get('opportunities'));
+    const fetchLeads = () => {
+        setLeads(DB.get('leads'));
     }
 
     useEffect( () => {
-        fetchOpportunities();
+        fetchLeads();
     }, []);
 
     //methods
         const markAsInterest = (leadId) => {
-           
+            const targetLead = leads.find( e => e.id === leadId );
+            DB.post('opportunities', targetLead);
+            DB.delete(`leads/${leadId}`);
+            fetchLeads()
         }
 
         const handleOnEmail = (leadId) => {
@@ -41,7 +44,7 @@ const OpportunityManagementPage = () => {
         >
             <Box padding={2}>
                 <Typography variant="h4">
-                    Opportunity Management
+                    Leads
                 </Typography>
             </Box>
 
@@ -90,7 +93,7 @@ const OpportunityManagementPage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {opportunities.map((row) => (
+                            {leads.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     sx={{
@@ -154,4 +157,4 @@ const OpportunityManagementPage = () => {
     );
 };
 
-export default OpportunityManagementPage;
+export default LeadsPage;
