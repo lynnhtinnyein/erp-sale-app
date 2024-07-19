@@ -66,6 +66,9 @@ const LeadsPage = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{ fontWeight: 'bold'}}>
+                                    id
+                                </TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                     Name
                                 </TableCell>
                                 <TableCell align="right" sx={{ fontWeight: 'bold'}}>
@@ -110,6 +113,9 @@ const LeadsPage = () => {
                                     }}
                                 >
                                     <TableCell scope="row">
+                                        {row.id}
+                                    </TableCell>
+                                    <TableCell scope="row" align="right">
                                         {row.name}
                                     </TableCell>
                                     <TableCell scope="row" align="right">

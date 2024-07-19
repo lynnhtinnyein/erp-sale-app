@@ -13,6 +13,7 @@ import OpportunitiesPage from "../pages/admin/OpportunitiesPage";
 import SaleOrdersPage from "../pages/admin/SaleOrdersPage";
 import DashboardPage from "../pages/admin/DashboardPage";
 import PublicPagesContainer from "../components/PublicPagesContainer";
+import InventoryPage from "../pages/admin/InventoryPage";
 
 //routes registry
 const routes = {
@@ -47,6 +48,14 @@ const routes = {
             path: '/admin/dashboard',
             title: 'Dashboard',
             element: <DashboardPage/>,
+            requireAuth: true
+        },
+        {
+            id: uuid(),
+            name: 'inventory',
+            path: '/admin/inventory',
+            title: 'Inventory',
+            element: <InventoryPage/>,
             requireAuth: true
         },
         {

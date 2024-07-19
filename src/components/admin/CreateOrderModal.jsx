@@ -57,7 +57,8 @@ const CreateOrderModal = ({
                     product: data.product,
                     quantity: inputs.quantity,
                     deliveryAddress: inputs.deliveryAddress,
-                    deliveryDate: inputs.deliveryDate
+                    deliveryDate: inputs.deliveryDate,
+                    createdDate: moment()
                 }
                 DB.post('sale_orders', newSaleOrder);
                 DB.delete(`opportunities/${data.id}`);

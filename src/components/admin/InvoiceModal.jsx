@@ -12,7 +12,6 @@ import {
     Paper,
     Divider,
 } from "@mui/material";
-import { v4 as uuid } from "uuid";
 import useDateParser from "../../hooks/useDateParser";
 import { Close, Email, Print } from "@mui/icons-material";
 
@@ -20,11 +19,12 @@ const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const QuotationPreviewModal = ({
+const InvoiceModal = ({
     open,
     onClose,
     onSendEmail,
-    data
+    data,
+    showActionButtons
 }) => {
 
     if(!data) return null;
@@ -34,18 +34,17 @@ const QuotationPreviewModal = ({
     const footerActionButtonsRef = useRef(null);
     const today = new Date();
 
-    const quotationDetails = {
-        id: uuid(),
+    const invoiceDetails = {
         date: dateParser.getDate(today),
-        paymentTerms: "Payment due within 30 days.",
-        deliveryTerms: "Delivered within 7 business days.",
-        warranty: "1-year warranty on all products.",
-        returnPolicy: "Returns accepted within 30 days.",
+        paymentTerms: 'Payment due within 30 days.',
+        deliveryTerms: 'Delivered within 7 business days.',
+        warranty: '1-year warranty on all products.',
+        returnPolicy: 'Returns accepted within 30 days.',
     };
 
-    const tax = Math.round((data.product.price * 5) / 100);
-
-    const totalAmount = data.product.price + tax;
+    const subTotal = data.product.price * data.quantity;
+    const tax = Math.round((subTotal * 5) / 100);
+    const totalAmount = subTotal + tax;
 
     const print = () => {
         //hide on print
@@ -58,7 +57,7 @@ const QuotationPreviewModal = ({
         headerActionButtonsRef.current.style.display = 'flex';
         footerActionButtonsRef.current.style.display = 'flex';
     }
-
+      
     return (
         <Dialog
             open={open}
@@ -105,29 +104,27 @@ const QuotationPreviewModal = ({
                     </Box>
                     <Box marginBottom={2}>
                         <Typography>
-                            Quotation Number: { quotationDetails.id }
+                            Quotation Number: { data.id }
                         </Typography>
-                        <Typography>Date: {quotationDetails.date}</Typography>
+                        <Typography>Date: {invoiceDetails.date}</Typography>
                     </Box>
                     <Box marginBottom={2}>
                         <Typography>
-                            Customer Name: {data.name}
+                            Customer Name: {data.customer.name}
                         </Typography>
                         <Typography>
-                            Customer Phone: {data.phone}
+                            Customer Phone: {data.customer.phone}
                         </Typography>
                         <Typography>
-                            Customer Email: {data.email}
+                            Customer Email: {data.customer.email}
                         </Typography>
                         <Typography>
-                            Customer Company: {data.companyName}
+                            Customer Address: {data.customer.address}
                         </Typography>
                     </Box>
                     <Box marginBottom={2}>
                         <Typography variant="body1">
-                            Introduction: Thank you for your interest in our
-                            products/services. Below you will find the detailed
-                            quotation as per your request.
+                            Thank you for your business. Below you will find the detailed invoice for your purchase.
                         </Typography>
                     </Box>
                     <Divider sx={{ my: 2 }} />
@@ -153,13 +150,13 @@ const QuotationPreviewModal = ({
                                             {data.product.type}
                                         </TableCell>
                                         <TableCell>
-                                            1
+                                            {data.quantity}
                                         </TableCell>
                                         <TableCell>
                                             ${data.product.price.toFixed(2)}
                                         </TableCell>
                                         <TableCell>
-                                        ${data.product.price.toFixed(2)}
+                                            ${subTotal.toFixed(2)}
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
@@ -172,7 +169,7 @@ const QuotationPreviewModal = ({
                         <Typography variant="h6">Pricing Summary:</Typography>
                         <Box display="flex" justifyContent="space-between">
                             <Typography>Subtotal:</Typography>
-                            <Typography>${data.product.price.toFixed(2)}</Typography>
+                            <Typography>${subTotal.toFixed(2)}</Typography>
                         </Box>
                         <Box display="flex" justifyContent="space-between">
                             <Typography>Discounts:</Typography>
@@ -199,16 +196,16 @@ const QuotationPreviewModal = ({
                     <Box sx={{ mb: 2 }}>
                         <Typography variant="h6">Terms of Sale:</Typography>
                         <Typography>
-                            Payment Terms: {quotationDetails.paymentTerms}
+                            Payment Terms: {invoiceDetails.paymentTerms}
                         </Typography>
                         <Typography>
-                            Delivery Terms: {quotationDetails.deliveryTerms}
+                            Delivery Terms: {invoiceDetails.deliveryTerms}
                         </Typography>
                         <Typography>
-                            Warranty: {quotationDetails.warranty}
+                            Warranty: {invoiceDetails.warranty}
                         </Typography>
                         <Typography>
-                            Return Policy: {quotationDetails.returnPolicy}
+                            Return Policy: {invoiceDetails.returnPolicy}
                         </Typography>
                     </Box>
                     <Divider sx={{ my: 2 }} />
@@ -227,35 +224,37 @@ const QuotationPreviewModal = ({
                 </Box>
 
                 {/* buttons */}
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    className="space-x-5"
-                    ref={footerActionButtonsRef}
-                    marginTop={5}
-                >
-                    <Button
-                        variant="contained"
-                        onClick={onSendEmail}
-                        size="large"
-                        startIcon={<Email/>}
+                { showActionButtons ? (
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        className="space-x-5"
+                        ref={footerActionButtonsRef}
+                        marginTop={5}
                     >
-                        Send Email
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={print}
-                        color="inherit"
-                        size="large"
-                        startIcon={<Print/>}
-                    >
-                        Print
-                    </Button>
-                </Box>
+                        <Button
+                            variant="contained"
+                            onClick={onSendEmail}
+                            size="large"
+                            startIcon={<Email/>}
+                        >
+                            Re-Send Email
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={print}
+                            color="inherit"
+                            size="large"
+                            startIcon={<Print/>}
+                        >
+                            Print
+                        </Button>
+                    </Box>
+                ) : ''}
             </Box>
         </Dialog>
     );
 };
 
-export default QuotationPreviewModal;
+export default InvoiceModal;

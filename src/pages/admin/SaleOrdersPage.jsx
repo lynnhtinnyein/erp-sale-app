@@ -1,15 +1,20 @@
-import { Article, Call, Email } from "@mui/icons-material";
-import { Button, ButtonGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useLocalDB from "../../hooks/useLocalDB";
 import { useEffect, useState } from "react";
-import QuotationPreviewModal from "../../components/admin/QuotationPreviewModal";
+import useDateParser from "../../hooks/useDateParser";
+import WarningMessages from "../../components/admin/WarningMessages";
+import { Receipt } from "@mui/icons-material";
+import InvoiceModal from "../../components/admin/InvoiceModal";
+import moment from "moment";
+import { v4 as uuid } from "uuid";
 
 const SaleOrdersPage = () => {
     const DB = useLocalDB();
+    const dateParser = useDateParser();
 
     const [saleOrders, setSaleOrders] = useState([]);
-    const [previewTarget, setPreviewTarget] = useState(null); 
+    const [modalTargetItem, setModalTargetItem] = useState(null); 
 
     const fetchSaleOrders = () => {
         setSaleOrders(DB.get('sale_orders'));
@@ -20,44 +25,22 @@ const SaleOrdersPage = () => {
     }, []);
 
     //methods
-        const handleOnEmail = (opportunityId) => {
-            DB.put(`sale_orders/${opportunityId}`, {
-                status: 'contacted'
-            });
-            fetchSaleOrders();
+        const showInvoice = (saleOrder) => {
+            setModalTargetItem(saleOrder);
         }
 
-        const handleOnCall = (opportunityId) => {
-            DB.put(`sale_orders/${opportunityId}`, {
-                status: 'contacted'
-            });
-            fetchSaleOrders();
-        }
-
-        const sendQuotationByMail = () => {
-            const opportunityId = previewTarget.id;
-            DB.put(`sale_orders/${opportunityId}`, {
-                status: 'quotation sent'
-            });
-            fetchSaleOrders();
-            setPreviewTarget(null);
-        }
-
-        const showQuotation = (opportunityId) => {
-            const opportunity = saleOrders.find( e => e.id === opportunityId);
-            const inventory = DB.get('inventory');
-            const product = inventory.find( e => e.id === opportunity.productId );
-            const previewTargetItem = {...opportunity, product };
-            setPreviewTarget(previewTargetItem);
-        }
-
-        const markAsAccepted = (opportunityId) => {
-            const targetOpportunity = saleOrders.find( e => e.id === opportunityId );
-            DB.post('sale_orders', {
+        const confirmOrder = (saleOrderId) => {
+            const targetSaleOrder = saleOrders.find( e => e.id === saleOrderId );
+            DB.post('delivered_orders', {
                 id: uuid(),
-                ...targetOpportunity
+                ...targetSaleOrder
             });
-            DB.delete(`sale_orders/${opportunityId}`);
+            const newStockCount = targetSaleOrder.product.stock - targetSaleOrder.quantity;
+            DB.put(`inventory/${targetSaleOrder.product.id}`, {
+                stock: newStockCount,
+                updatedAt: moment()
+            })
+            DB.delete(`sale_orders/${saleOrderId}`);
             fetchSaleOrders();
         }
 
@@ -72,9 +55,16 @@ const SaleOrdersPage = () => {
             >
                 <Box padding={2}>
                     <Typography variant="h4">
-                        Opportunity Management
+                        Sale Orders
                     </Typography>
                 </Box>
+
+                <WarningMessages
+                    padding={2}
+                    messages={[
+                        'When an order is confirmed to deliver, the invoice will be sent to customer via provided email automatically.',
+                    ]}
+                />
 
                 <Box 
                     flexGrow={1} 
@@ -85,37 +75,46 @@ const SaleOrdersPage = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: 'bold'}}>
-                                        Name
+                                        OrderID
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Phone
+                                        Customer Name
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Email
+                                        Customer Phone
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        CompanyName
+                                        Customer Email
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        ProductID
+                                        Product ID
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Type
+                                        Product Name
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Date
+                                        Product Price
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Description
+                                        Product Stock
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Status
+                                        Order Qty
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Contact
+                                        TotalPrice
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                        Auto Generated Quotations
+                                        Delivery Address
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                        Delivery Date
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                        Order Created Date
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                        Auto Generated Invoice
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                         Actions
@@ -132,78 +131,64 @@ const SaleOrdersPage = () => {
                                         }}
                                     >
                                         <TableCell scope="row">
-                                            {row.name}
+                                            {row.id}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.phone}
+                                            {row.customer.name}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.email}
+                                            {row.customer.phone}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.companyName}
+                                            {row.customer.email}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.productId}
+                                            {row.product.id}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.type}
+                                            {row.product.name}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.date}
+                                            ${row.product.price.toFixed(2)}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            {row.description}
+                                            {row.product.stock}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            <Typography textTransform="capitalize" fontSize={13} color={row.status ? 'green' : 'error'}>
-                                                { row.status ?? 'Not Contacted'}
-                                            </Typography>
+                                            {row.quantity}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            <ButtonGroup
-                                                display="flex"
-                                            >
-                                                <IconButton
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="primary"
-                                                    onClick={() => handleOnEmail(row.id)}
-                                                >
-                                                    <Email />
-                                                </IconButton>
-                                                <IconButton
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="success"
-                                                    onClick={() => handleOnCall(row.id)}
-                                                >
-                                                    <Call />
-                                                </IconButton>
-                                            </ButtonGroup>
+                                            ${(row.product.price * row.quantity).toFixed(2)}
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
+                                            {row.deliveryAddress}
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
+                                            {dateParser.getDate(row.deliveryDate)}
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
+                                            {dateParser.getDate(row.createdDate)}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
                                             <Button
                                                 variant="contained"
                                                 size="small"
                                                 color="inherit"
-                                                onClick={() => showQuotation(row.id)}
-                                                startIcon={<Article/>}
+                                                onClick={() => showInvoice(row)}
+                                                startIcon={<Receipt/>}
                                             >
-                                                View
+                                                View Invoice
                                             </Button>
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            { row.status === 'quotation sent' ? (
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="success"
-                                                    onClick={() => markAsAccepted(row.id)}
-                                                >
-                                                    Mark as accepted
-                                                </Button>
-                                            ) : '' } 
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                color="success"
+                                                onClick={() => confirmOrder(row.id)}
+                                            >
+                                                Confirm And Deliver
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -212,11 +197,11 @@ const SaleOrdersPage = () => {
                     </TableContainer>
                 </Box>
             </Box>
-            <QuotationPreviewModal 
-                open={Boolean(previewTarget)}
-                onClose={() => setPreviewTarget(null)}
-                data={previewTarget}
-                onSendEmail={sendQuotationByMail}
+            <InvoiceModal
+                open={Boolean(modalTargetItem)}
+                onClose={() => setModalTargetItem(null)}
+                data={modalTargetItem}
+                showActionButtons={false}
             />
         </>
     );

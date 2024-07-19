@@ -52,8 +52,7 @@ const OpportunitiesPage = () => {
             closeModal('quotation');
         }
 
-        const openModal = (modal, opportunityId) => {
-            const opportunity = opportunities.find( e => e.id === opportunityId);
+        const openModal = (modal, opportunity) => {
             const inventory = DB.get('inventory');
             const product = inventory.find( e => e.id === opportunity.productId );
             const targetItem = {...opportunity, product };
@@ -105,6 +104,9 @@ const OpportunitiesPage = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: 'bold'}}>
+                                        id
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                         Name
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
@@ -152,6 +154,9 @@ const OpportunitiesPage = () => {
                                         }}
                                     >
                                         <TableCell scope="row">
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
                                             {row.name}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
@@ -207,7 +212,7 @@ const OpportunitiesPage = () => {
                                                 variant="contained"
                                                 size="small"
                                                 color="inherit"
-                                                onClick={() => openModal('quotation', row.id)}
+                                                onClick={() => openModal('quotation', row)}
                                                 startIcon={<Article/>}
                                             >
                                                 View
@@ -219,7 +224,7 @@ const OpportunitiesPage = () => {
                                                     variant="contained"
                                                     size="small"
                                                     color="success"
-                                                    onClick={() => openModal('create_order', row.id)}
+                                                    onClick={() => openModal('create_order', row)}
                                                 >
                                                     Create Order
                                                 </Button>

@@ -1,5 +1,4 @@
-import { v4 as uuid } from 'uuid';
-import dummyData from "../dummy-data";
+import seeders from "../seeders";
 
 const useLocalDB = () => {
     class localDB {
@@ -41,8 +40,8 @@ const useLocalDB = () => {
         }
 
         seed(){
-            dummyData.forEach( table => {
-                localStorage.setItem(table.name, JSON.stringify((table.data)));
+            seeders.forEach( seeder => {
+                localStorage.setItem(seeder.tableName, JSON.stringify((seeder.data)));
             });
         }
     } 
