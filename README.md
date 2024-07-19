@@ -2,7 +2,30 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## Installation and Running
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Install Dependencies**:
+   ```bash
+   npm install
+
+2. **Run In Local Env**:
+   ```bash
+   npm run dev
+
+
+## Tech Stack
+
+- **Vite**
+- **React**
+- **React Router**
+- **Material-UI**
+- **TailwindCSS**
+- **Redux**:
+
+## Main Features
+
+- **Public Routes**: Accessible by anyone without authentication.
+- **Protected Routes**: Secured with client-side middleware to ensure only authenticated users can access them.
+- **LocalStorage**: Used localStorage as a DB for demo.
+- **Fully Responsive Design**: Ensures compatibility across various devices and screen sizes.
+
