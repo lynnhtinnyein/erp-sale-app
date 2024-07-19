@@ -1,8 +1,9 @@
 import moment from "moment";
+import { v4 as uuid } from "uuid";
 
 const leads = [
     {
-        id: 1,
+        id: uuid(),
         name: 'Customer 1', 
         phone: '0123456789',
         email: 'customer1@gmail.com',
@@ -13,7 +14,7 @@ const leads = [
         type: 'appointment' 
     },
     {
-        id: 2,
+        id: uuid(),
         name: 'Customer 2', 
         phone: '987654322',
         email: 'customer2@gmail.com',
@@ -24,7 +25,7 @@ const leads = [
         type: 'service_inquiry' 
     },
     {
-        id: 3,
+        id: uuid(),
         name: 'Customer 3', 
         phone: '433533223',
         email: 'customer3@gmail.com',
@@ -35,7 +36,7 @@ const leads = [
         type: 'price_inquiry' 
     },
     {
-        id: 4,
+        id: uuid(),
         name: 'Customer 4', 
         phone: '433533223',
         email: 'customer4@gmail.com',
