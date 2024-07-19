@@ -14,6 +14,7 @@ import SaleOrdersPage from "../pages/admin/SaleOrdersPage";
 import DashboardPage from "../pages/admin/DashboardPage";
 import PublicPagesContainer from "../components/PublicPagesContainer";
 import InventoryPage from "../pages/admin/InventoryPage";
+import FinancialRecordsPage from "../pages/admin/FinancialRecordsPage";
 
 //routes registry
 const routes = {
@@ -80,6 +81,14 @@ const routes = {
             path: '/admin/sale_orders',
             title: 'Sale Orders',
             element: <SaleOrdersPage/>,
+            requireAuth: true
+        },
+        {
+            id: uuid(),
+            name: 'financial_records',
+            path: '/admin/financial_records',
+            title: 'Financial Records',
+            element: <FinancialRecordsPage/>,
             requireAuth: true
         }
     ]

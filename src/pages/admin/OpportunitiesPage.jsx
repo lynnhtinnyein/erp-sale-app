@@ -1,4 +1,4 @@
-import { Article, Call, Email } from "@mui/icons-material";
+import { Article, Call, Email, Send } from "@mui/icons-material";
 import { Button, ButtonGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useLocalDB from "../../hooks/useLocalDB";
@@ -43,8 +43,7 @@ const OpportunitiesPage = () => {
             fetchOpportunities();
         }
 
-        const sendQuotationByMail = () => {
-            const opportunityId = modalTargetItem.id;
+        const sendQuotationByMail = (opportunityId) => {
             DB.put(`opportunities/${opportunityId}`, {
                 status: 'quotation sent'
             });
@@ -228,7 +227,17 @@ const OpportunitiesPage = () => {
                                                 >
                                                     Create Order
                                                 </Button>
-                                            ) : '' } 
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    color="primary"
+                                                    startIcon={<Send/>}
+                                                    onClick={() => sendQuotationByMail(row.id)}
+                                                >
+                                                    Send Quotation
+                                                </Button>
+                                            )} 
                                         </TableCell>
                                     </TableRow>
                                 ))}

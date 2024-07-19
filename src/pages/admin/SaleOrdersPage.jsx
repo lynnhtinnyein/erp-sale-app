@@ -1,13 +1,57 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import useLocalDB from "../../hooks/useLocalDB";
 import { useEffect, useState } from "react";
+import { Receipt, Send } from "@mui/icons-material";
+import useLocalDB from "../../hooks/useLocalDB";
 import useDateParser from "../../hooks/useDateParser";
 import WarningMessages from "../../components/admin/WarningMessages";
-import { Receipt } from "@mui/icons-material";
 import InvoiceModal from "../../components/admin/InvoiceModal";
 import moment from "moment";
-import { v4 as uuid } from "uuid";
+
+const ActionButton = ({ 
+    order,
+    status,
+    onConfirmOrder,
+    onConfirmPayment,
+    onSendInvoice
+}) => {
+    const buttonPropsMap = {
+        'created': {
+            icon: null,
+            color: 'success',
+            text: 'Confirm And Deliver',
+            action: () => onConfirmOrder(order.id)
+        },
+        'delivered': {
+            icon: <Send/>,
+            color: 'primary',
+            text: 'Send Invoice',
+            action: () => onSendInvoice(order.id)
+        },
+        'invoice sent': {
+            icon: null,
+            color: 'success',
+            text: 'Confirm Payment',
+            action: () => onConfirmPayment(order)
+        }
+    }
+
+    const buttonProps = buttonPropsMap[status];
+
+    if(!buttonProps) return null;
+
+    return (
+        <Button
+            variant="contained"
+            size="small"
+            color={buttonProps.color}
+            startIcon={buttonProps.icon}
+            onClick={buttonProps.action}
+        >
+            { buttonProps.text }
+        </Button>
+    )
+}
 
 const SaleOrdersPage = () => {
     const DB = useLocalDB();
@@ -30,17 +74,30 @@ const SaleOrdersPage = () => {
         }
 
         const confirmOrder = (saleOrderId) => {
-            const targetSaleOrder = saleOrders.find( e => e.id === saleOrderId );
-            DB.post('delivered_orders', {
-                id: uuid(),
-                ...targetSaleOrder
+            DB.put(`sale_orders/${saleOrderId}`, {
+                status: 'delivered',
+                deliveredDate: moment(),
             });
-            const newStockCount = targetSaleOrder.product.stock - targetSaleOrder.quantity;
-            DB.put(`inventory/${targetSaleOrder.product.id}`, {
-                stock: newStockCount,
-                updatedAt: moment()
-            })
-            DB.delete(`sale_orders/${saleOrderId}`);
+            fetchSaleOrders();
+        }
+
+        const sendInvoiceByMail = (saleOrderId) => {
+            DB.put(`sale_orders/${saleOrderId}`, {
+                status: 'invoice sent'
+            });
+            fetchSaleOrders();
+            setModalTargetItem(null);
+        }
+
+        const confirmPayment = (saleOrder) => {
+            DB.put(`sale_orders/${saleOrder.id}`, {
+                status: 'paid',
+                paymentDate: moment(),
+            });
+            DB.post('financial_records', {
+                ...saleOrder,
+                paymentDate: moment()
+            });
             fetchSaleOrders();
         }
 
@@ -53,16 +110,24 @@ const SaleOrdersPage = () => {
                 overflow="hidden"
                 className="space-y-3"
             >
-                <Box padding={2}>
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    padding={2}
+                    className="space-y-2"
+                >
                     <Typography variant="h4">
                         Sale Orders
+                    </Typography>
+                    <Typography color="gray" variant="h6">
+                        Review and confrim orders
                     </Typography>
                 </Box>
 
                 <WarningMessages
                     padding={2}
                     messages={[
-                        'When an order is confirmed to deliver, the invoice will be sent to customer via provided email automatically.',
+                        'Note: in demo mode, when an order is confirmed to deliver, it will be assumed as delivered immediately.',
                     ]}
                 />
 
@@ -112,6 +177,9 @@ const SaleOrdersPage = () => {
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                         Order Created Date
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                        Status
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                         Auto Generated Invoice
@@ -170,6 +238,17 @@ const SaleOrdersPage = () => {
                                             {dateParser.getDate(row.createdDate)}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
+                                            <Typography 
+                                                scope="row"
+                                                align="right"
+                                                textTransform="capitalize" 
+                                                fontSize={13} 
+                                                color={row.status === 'created' ? 'error' : 'green'}
+                                            >
+                                                { row.status === 'created' ? 'Waiting for confirmation' : row.status }
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
                                             <Button
                                                 variant="contained"
                                                 size="small"
@@ -181,14 +260,13 @@ const SaleOrdersPage = () => {
                                             </Button>
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                color="success"
-                                                onClick={() => confirmOrder(row.id)}
-                                            >
-                                                Confirm And Deliver
-                                            </Button>
+                                            <ActionButton 
+                                                order={row}
+                                                status={row.status}
+                                                onConfirmOrder={confirmOrder}
+                                                onSendInvoice={sendInvoiceByMail}    
+                                                onConfirmPayment={confirmPayment}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -201,7 +279,7 @@ const SaleOrdersPage = () => {
                 open={Boolean(modalTargetItem)}
                 onClose={() => setModalTargetItem(null)}
                 data={modalTargetItem}
-                showActionButtons={false}
+                onSendEmail={sendInvoiceByMail}
             />
         </>
     );

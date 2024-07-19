@@ -237,7 +237,7 @@ const QuotationPreviewModal = ({
                 >
                     <Button
                         variant="contained"
-                        onClick={onSendEmail}
+                        onClick={() => onSendEmail(data.id)}
                         size="large"
                         startIcon={<Email/>}
                     >

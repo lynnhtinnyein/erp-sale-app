@@ -24,7 +24,6 @@ const InvoiceModal = ({
     onClose,
     onSendEmail,
     data,
-    showActionButtons
 }) => {
 
     if(!data) return null;
@@ -84,7 +83,7 @@ const InvoiceModal = ({
                     </IconButton>
                 </Box>
 
-                {/* Quotation */}
+                {/* invoice */}
                 <Box>
                     <Box 
                         borderBottom={1}
@@ -104,7 +103,7 @@ const InvoiceModal = ({
                     </Box>
                     <Box marginBottom={2}>
                         <Typography>
-                            Quotation Number: { data.id }
+                            Invoice Number: { data.id }
                         </Typography>
                         <Typography>Date: {invoiceDetails.date}</Typography>
                     </Box>
@@ -224,34 +223,32 @@ const InvoiceModal = ({
                 </Box>
 
                 {/* buttons */}
-                { showActionButtons ? (
-                    <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        className="space-x-5"
-                        ref={footerActionButtonsRef}
-                        marginTop={5}
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    className="space-x-5"
+                    ref={footerActionButtonsRef}
+                    marginTop={5}
+                >
+                    <Button
+                        variant="contained"
+                        onClick={() => onSendEmail(data.id)}
+                        size="large"
+                        startIcon={<Email/>}
                     >
-                        <Button
-                            variant="contained"
-                            onClick={onSendEmail}
-                            size="large"
-                            startIcon={<Email/>}
-                        >
-                            Re-Send Email
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={print}
-                            color="inherit"
-                            size="large"
-                            startIcon={<Print/>}
-                        >
-                            Print
-                        </Button>
-                    </Box>
-                ) : ''}
+                        Send Email
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={print}
+                        color="inherit"
+                        size="large"
+                        startIcon={<Print/>}
+                    >
+                        Print
+                    </Button>
+                </Box>
             </Box>
         </Dialog>
     );

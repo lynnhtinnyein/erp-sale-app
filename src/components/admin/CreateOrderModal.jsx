@@ -58,6 +58,7 @@ const CreateOrderModal = ({
                     quantity: inputs.quantity,
                     deliveryAddress: inputs.deliveryAddress,
                     deliveryDate: inputs.deliveryDate,
+                    status: 'created',
                     createdDate: moment()
                 }
                 DB.post('sale_orders', newSaleOrder);
