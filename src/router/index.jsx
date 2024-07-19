@@ -9,7 +9,8 @@ import DashboardPagesContainer from "../components/admin/DashboardPagesContainer
 
 import LoginPage from "../pages/admin/LoginPage";
 import LeadsPage from "../pages/admin/LeadsPage";
-import OpportunityManagementPage from "../pages/admin/OpportunityManagementPage";
+import OpportunitiesPage from "../pages/admin/OpportunitiesPage";
+import SaleOrdersPage from "../pages/admin/SaleOrdersPage";
 import DashboardPage from "../pages/admin/DashboardPage";
 import PublicPagesContainer from "../components/PublicPagesContainer";
 
@@ -50,7 +51,7 @@ const routes = {
         },
         {
             id: uuid(),
-            name: 'Leads',
+            name: 'leads',
             path: '/admin/leads',
             title: 'Leads',
             element: <LeadsPage/>,
@@ -58,10 +59,18 @@ const routes = {
         },
         {
             id: uuid(),
-            name: 'Opportunity Management',
-            path: '/admin/opportunity_management',
+            name: 'oportunities',
+            path: '/admin/opportunities',
             title: 'Opportunity Management',
-            element: <OpportunityManagementPage/>,
+            element: <OpportunitiesPage/>,
+            requireAuth: true
+        },
+        {
+            id: uuid(),
+            name: 'sale_orders',
+            path: '/admin/sale_orders',
+            title: 'Sale Orders',
+            element: <SaleOrdersPage/>,
             requireAuth: true
         }
     ]

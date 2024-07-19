@@ -21,7 +21,7 @@ const opportunities = [
         description: '',
         date: moment(),
         productId: 6,
-        type: 'price_enquiry' 
+        type: 'price_inquiry' 
     },
 ]
 

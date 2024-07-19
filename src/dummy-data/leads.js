@@ -21,7 +21,7 @@ const leads = [
         description: '',
         date: moment(),
         productId: 3,
-        type: 'service_enquiry' 
+        type: 'service_inquiry' 
     },
     {
         id: 3,
@@ -32,7 +32,7 @@ const leads = [
         description: 'abc',
         date: moment(),
         productId: 6,
-        type: 'price_enquiry' 
+        type: 'price_inquiry' 
     },
     {
         id: 4,

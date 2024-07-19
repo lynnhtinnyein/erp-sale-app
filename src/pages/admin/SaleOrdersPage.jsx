@@ -1,50 +1,64 @@
-import { Article, Call, Email, Visibility } from "@mui/icons-material";
-import { Button, ButtonGroup, Dialog, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Article, Call, Email } from "@mui/icons-material";
+import { Button, ButtonGroup, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import useLocalDB from "../../hooks/useLocalDB";
 import { useEffect, useState } from "react";
 import QuotationPreviewModal from "../../components/admin/QuotationPreviewModal";
 
-const OpportunityManagementPage = () => {
+const SaleOrdersPage = () => {
     const DB = useLocalDB();
 
-    const [opportunities, setOpportunities] = useState([]);
+    const [saleOrders, setSaleOrders] = useState([]);
     const [previewTarget, setPreviewTarget] = useState(null); 
 
-    const fetchOpportunities = () => {
-        setOpportunities(DB.get('opportunities'));
+    const fetchSaleOrders = () => {
+        setSaleOrders(DB.get('sale_orders'));
     }
 
     useEffect( () => {
-        fetchOpportunities();
+        fetchSaleOrders();
     }, []);
 
     //methods
         const handleOnEmail = (opportunityId) => {
-            DB.put(`opportunities/${opportunityId}`, {
+            DB.put(`sale_orders/${opportunityId}`, {
                 status: 'contacted'
             });
-            fetchOpportunities();
+            fetchSaleOrders();
         }
 
         const handleOnCall = (opportunityId) => {
-            DB.put(`opportunities/${opportunityId}`, {
+            DB.put(`sale_orders/${opportunityId}`, {
                 status: 'contacted'
             });
-            fetchOpportunities();
+            fetchSaleOrders();
         }
 
-        const sendEmail = () => {
-            handleOnEmail(previewTarget.id);
+        const sendQuotationByMail = () => {
+            const opportunityId = previewTarget.id;
+            DB.put(`sale_orders/${opportunityId}`, {
+                status: 'quotation sent'
+            });
+            fetchSaleOrders();
             setPreviewTarget(null);
         }
 
         const showQuotation = (opportunityId) => {
-            const opportunity = opportunities.find( e => e.id === opportunityId);
+            const opportunity = saleOrders.find( e => e.id === opportunityId);
             const inventory = DB.get('inventory');
             const product = inventory.find( e => e.id === opportunity.productId );
             const previewTargetItem = {...opportunity, product };
             setPreviewTarget(previewTargetItem);
+        }
+
+        const markAsAccepted = (opportunityId) => {
+            const targetOpportunity = saleOrders.find( e => e.id === opportunityId );
+            DB.post('sale_orders', {
+                id: uuid(),
+                ...targetOpportunity
+            });
+            DB.delete(`sale_orders/${opportunityId}`);
+            fetchSaleOrders();
         }
 
     return (
@@ -101,12 +115,15 @@ const OpportunityManagementPage = () => {
                                         Contact
                                     </TableCell>
                                     <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                                        Auto Generated Quotations
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold'}}>
                                         Actions
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {opportunities.map((row, index) => (
+                                {saleOrders.map((row, index) => (
                                     <TableRow
                                         key={row.id + index}
                                         sx={{
@@ -139,7 +156,7 @@ const OpportunityManagementPage = () => {
                                             {row.description}
                                         </TableCell>
                                         <TableCell scope="row" align="right">
-                                            <Typography fontSize={13} color={row.status ? 'green' : 'error'}>
+                                            <Typography textTransform="capitalize" fontSize={13} color={row.status ? 'green' : 'error'}>
                                                 { row.status ?? 'Not Contacted'}
                                             </Typography>
                                         </TableCell>
@@ -169,12 +186,24 @@ const OpportunityManagementPage = () => {
                                             <Button
                                                 variant="contained"
                                                 size="small"
-                                                color="primary"
+                                                color="inherit"
                                                 onClick={() => showQuotation(row.id)}
                                                 startIcon={<Article/>}
                                             >
-                                                Quotation
+                                                View
                                             </Button>
+                                        </TableCell>
+                                        <TableCell scope="row" align="right">
+                                            { row.status === 'quotation sent' ? (
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    color="success"
+                                                    onClick={() => markAsAccepted(row.id)}
+                                                >
+                                                    Mark as accepted
+                                                </Button>
+                                            ) : '' } 
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -187,10 +216,10 @@ const OpportunityManagementPage = () => {
                 open={Boolean(previewTarget)}
                 onClose={() => setPreviewTarget(null)}
                 data={previewTarget}
-                onSendEmail={sendEmail}
+                onSendEmail={sendQuotationByMail}
             />
         </>
     );
 };
 
-export default OpportunityManagementPage;
+export default SaleOrdersPage;

@@ -148,8 +148,8 @@ const LeadFormPage = () => {
                         onChange={handleChange}
                     >
                         <FormControlLabel value="appointment" control={<Radio />} label="Demo Appointment" />
-                        <FormControlLabel value="price_enquiry" control={<Radio />} label="Price Enquiry" />
-                        <FormControlLabel value="service_enquiry" control={<Radio />} label="Service Enquiry" />
+                        <FormControlLabel value="price_inquiry" control={<Radio />} label="Price Inquiry" />
+                        <FormControlLabel value="service_inquiry" control={<Radio />} label="Service Inquiry" />
                     </RadioGroup>
                 </Box>
                 
