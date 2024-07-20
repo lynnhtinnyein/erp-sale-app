@@ -58,10 +58,7 @@ const LeadsPage = () => {
                 </Typography>
             </Box>
 
-            <Table
-                flexGrow={1}
-                isEmpty={leads.length === 0}
-            >
+            <Table isEmpty={leads.length === 0}>
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ fontWeight: 'bold'}}>

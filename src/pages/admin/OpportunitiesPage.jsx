@@ -105,10 +105,7 @@ const OpportunitiesPage = () => {
                     ]}
                 />
 
-                <Table
-                    flexGrow={1}
-                    isEmpty={opportunities.length === 0}
-                >
+                <Table isEmpty={opportunities.length === 0}>
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontWeight: 'bold'}}>

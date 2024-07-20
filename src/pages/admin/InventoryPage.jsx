@@ -33,10 +33,7 @@ const InventoryPage = () => {
                 </Typography>
             </Box>
 
-            <Table
-                flexGrow={1}
-                isEmpty={inventory.length === 0}
-            >
+            <Table isEmpty={inventory.length === 0}>
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ fontWeight: 'bold'}}>

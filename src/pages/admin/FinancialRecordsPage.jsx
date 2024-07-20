@@ -38,10 +38,7 @@ const FinancialRecordsPage = () => {
                 </Typography>
             </Box>
 
-            <Table
-                flexGrow={1}
-                isEmpty={financialRecords.length === 0}
-            >
+            <Table isEmpty={financialRecords.length === 0}>
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ fontWeight: 'bold'}}>

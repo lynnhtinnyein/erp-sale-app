@@ -1,7 +1,7 @@
-import { Button, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Button, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
-import { Receipt, Send } from "@mui/icons-material";
+import { FilterAltOff, Receipt, Search, Send } from "@mui/icons-material";
 import useLocalDB from "../../hooks/useLocalDB";
 import useDateParser from "../../hooks/useDateParser";
 import WarningMessages from "../../components/admin/WarningMessages";
@@ -9,6 +9,7 @@ import InvoiceModal from "../../components/admin/InvoiceModal";
 import moment from "moment";
 import { useSnackbar } from "notistack";
 import Table from "../../components/Table";
+import { useLocation } from "react-router-dom";
 
 const ActionButton = ({ 
     order,
@@ -60,15 +61,20 @@ const SaleOrdersPage = () => {
     const DB = useLocalDB();
     const dateParser = useDateParser();
 
+    const { state } = useLocation();
+    const orderIdParam = state?.id;
+    
+    const [orderId, setOrderId] = useState(orderIdParam ?? '');
     const [saleOrders, setSaleOrders] = useState([]);
     const [modalTargetItem, setModalTargetItem] = useState(null); 
 
-    const fetchSaleOrders = () => {
-        setSaleOrders(DB.get('sale_orders'));
+    const fetchSaleOrders = (id) => {
+        const url = id ? `sale_orders/${id}` : 'sale_orders';
+        setSaleOrders(DB.get(url));
     }
 
     useEffect( () => {
-        fetchSaleOrders();
+        fetchSaleOrders(orderIdParam);
     }, []);
 
     //methods
@@ -112,6 +118,14 @@ const SaleOrdersPage = () => {
             );
         }
 
+        const handleOrderIdChange = (e) => {
+            setOrderId(e.target.value);
+        }
+
+        const searchByOrderId = () => {
+            fetchSaleOrders(orderId);
+        }
+
     return (
         <>
             <Box
@@ -142,10 +156,35 @@ const SaleOrdersPage = () => {
                     ]}
                 />
 
-                <Table
-                    flexGrow={1}
-                    isEmpty={saleOrders.length === 0}
+                {/* Search Section */}
+                <Box 
+                    margin={2}
+                    display="flex"
+                    className="space-x-1"
                 >
+                    <TextField
+                        fullWidth
+                        type="text"
+                        variant="filled"
+                        label="Search By Order ID"
+                        value={orderId}
+                        onChange={handleOrderIdChange}
+                    />
+                    <Button
+                        variant="contained"
+                        onClick={searchByOrderId}
+                    >
+                        <Search/>
+                    </Button>
+                    <Button
+                        color="inherit"
+                        onClick={fetchSaleOrders}
+                    >
+                        <FilterAltOff/>
+                    </Button>
+                </Box>
+
+                <Table isEmpty={saleOrders.length === 0}>
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontWeight: 'bold'}}>

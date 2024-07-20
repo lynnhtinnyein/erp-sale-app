@@ -4,14 +4,12 @@ import React from 'react'
 
 const Table = ({
     children,
-    isEmpty,
-    ...props
+    isEmpty
 }) => {
   return (
-        <TableContainer 
+        <TableContainer
             component={Paper} 
             square
-            {...props}
         >
             <MuiTable
                 stickyHeader 

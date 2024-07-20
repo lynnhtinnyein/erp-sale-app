@@ -67,7 +67,6 @@ const DashboardPage = () => {
                         {...item}
                     />
                 )}
-                
             </Box>
         </Box>
     );
