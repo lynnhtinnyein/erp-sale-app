@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import useLocalDB from "../../hooks/useLocalDB";
 import useDateParser from "../../hooks/useDateParser";
 import Table from "../../components/Table";
+import { useNavigate } from "react-router-dom";
 
 const FinancialRecordsPage = () => {
     const DB = useLocalDB();
     const dateParser = useDateParser();
+    const navigate = useNavigate();
 
     const [financialRecords, setFinancialRecords] = useState([]);
 
@@ -18,6 +20,14 @@ const FinancialRecordsPage = () => {
     useEffect( () => {
         fetchFinancialRecords();
     }, []);
+
+    const viewOrder = (orderId) => {
+        navigate('/admin/sale_orders', {
+            state: {
+                id: orderId
+            }
+        });
+    } 
 
     return (
         <Box
@@ -72,6 +82,8 @@ const FinancialRecordsPage = () => {
                                 "&:last-child td, &:last-child th":
                                     { border: 0 }
                             }}
+                            className="cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                            onClick={() => viewOrder(row.id)}
                         >
                             <TableCell scope="row">
                                 {row.id}

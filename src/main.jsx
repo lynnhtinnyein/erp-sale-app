@@ -17,13 +17,11 @@ const snackbarProps = {
 } 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <BrowserRouter>
-                <SnackbarProvider {...snackbarProps} >
-                    <App />
-                </SnackbarProvider>
-            </BrowserRouter>
-        </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+        <BrowserRouter>
+            <SnackbarProvider {...snackbarProps} >
+                <App />
+            </SnackbarProvider>
+        </BrowserRouter>
+    </Provider>
 );

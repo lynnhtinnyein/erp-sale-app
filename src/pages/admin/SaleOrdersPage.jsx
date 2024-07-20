@@ -126,6 +126,11 @@ const SaleOrdersPage = () => {
             fetchSaleOrders(orderId);
         }
 
+        const clearFilters = () => {
+            setOrderId('');
+            fetchSaleOrders();
+        }
+
     return (
         <>
             <Box
@@ -178,7 +183,7 @@ const SaleOrdersPage = () => {
                     </Button>
                     <Button
                         color="inherit"
-                        onClick={fetchSaleOrders}
+                        onClick={clearFilters}
                     >
                         <FilterAltOff/>
                     </Button>
