@@ -1,14 +1,15 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import useLocalDB from "../../hooks/useLocalDB";
 import useDateParser from "../../hooks/useDateParser";
+import Table from "../../components/Table";
 
 const FinancialRecordsPage = () => {
     const DB = useLocalDB();
     const dateParser = useDateParser();
 
-    const [fetchRecords, setFinancialRecords] = useState([]);
+    const [financialRecords, setFinancialRecords] = useState([]);
 
     const fetchFinancialRecords = () => {
         setFinancialRecords(DB.get('financial_records'));
@@ -37,75 +38,71 @@ const FinancialRecordsPage = () => {
                 </Typography>
             </Box>
 
-            <Box 
-                flexGrow={1} 
-                overflow="auto"
+            <Table
+                flexGrow={1}
+                isEmpty={financialRecords.length === 0}
             >
-                <TableContainer component={Paper} square>
-                    <Table sx={{ minWidth: 1000 }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ fontWeight: 'bold'}}>
-                                    OrderID / InvoiceNo
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Product ID
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Quantity
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Unit Price
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Delivered Date
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Payment Date
-                                </TableCell>
-                                <TableCell align="right" sx={{ fontWeight: 'bold'}}>
-                                    Transition Amount
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {fetchRecords.map((row, index) => (
-                                <TableRow
-                                    key={row.id + index}
-                                    sx={{
-                                        "&:last-child td, &:last-child th":
-                                            { border: 0 }
-                                    }}
-                                >
-                                    <TableCell scope="row">
-                                        {row.id}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        {row.product.id}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        {row.quantity}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        ${row.product.price.toFixed(2)}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        {dateParser.getDateTime(row.deliveredDate)}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        {dateParser.getDateTime(row.paymentDate)}
-                                    </TableCell>
-                                    <TableCell scope="row" align="right">
-                                        <Typography color="green">
-                                            + ${row.product.price.toFixed(2) * row.quantity}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold'}}>
+                            OrderID / InvoiceNo
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Product ID
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Quantity
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Unit Price
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Delivered Date
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Payment Date
+                        </TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold'}}>
+                            Transition Amount
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {financialRecords.map((row, index) => (
+                        <TableRow
+                            key={row.id + index}
+                            sx={{
+                                "&:last-child td, &:last-child th":
+                                    { border: 0 }
+                            }}
+                        >
+                            <TableCell scope="row">
+                                {row.id}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                {row.product.id}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                {row.quantity}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                ${row.product.price.toFixed(2)}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                {dateParser.getDateTime(row.deliveredDate)}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                {dateParser.getDateTime(row.paymentDate)}
+                            </TableCell>
+                            <TableCell scope="row" align="right">
+                                <Typography color="green">
+                                    + ${row.product.price.toFixed(2) * row.quantity}
+                                </Typography>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </Box>
     );
 };

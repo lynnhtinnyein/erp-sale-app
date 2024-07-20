@@ -123,7 +123,7 @@ const CreateOrderModal = ({
                             <Typography fontWeight="bold">Product Detail</Typography>
                             <Typography fontSize={14} color="gray">ProductID: { data.productId }</Typography>
                             <Typography fontSize={14} color="gray">{ data.product.name } ({ data.product.type })</Typography>
-                            <Typography fontSize={14} color="gray">${ data.product.price.toFixed(2) }</Typography>
+                            <Typography fontSize={14} color="gray">${ data.product.price.toFixed(2) } / item</Typography>
                         </Box>
                         <TextField
                             name="customerName"

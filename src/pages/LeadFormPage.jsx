@@ -1,12 +1,13 @@
 import { Button, FormControlLabel, Radio, RadioGroup, TextField, TextareaAutosize, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import moment from "moment";
 import { v4 as uuid } from 'uuid';
 import useLocalDB from "../hooks/useLocalDB";
+import moment from "moment";
+import { useSnackbar } from "notistack";
 
 const defaultInputs = { 
     name: '', 
@@ -14,11 +15,12 @@ const defaultInputs = {
     email: '',
     companyName: '',
     description: '',
-    type: '',
+    type: 'appointment',
     date: null
 }
 
 const LeadFormPage = () => {
+    const { enqueueSnackbar } = useSnackbar();
     const DB = useLocalDB();
     const { state } = useLocation();
     const productId = state?.id;  
@@ -39,7 +41,12 @@ const LeadFormPage = () => {
         const handleSubmit = () => {
             setErrorCheckable(true);
 
-            const hasEmptyInput = !inputs.name || !inputs.phone || !inputs.email || !inputs.companyName || !inputs.date;
+            const hasEmptyInput = !inputs.name || 
+            !inputs.phone || 
+            !inputs.email || 
+            !inputs.companyName || 
+            !inputs.type || 
+            !inputs.date;
             
             if(!hasEmptyInput){
                 const newLead = {
@@ -52,8 +59,11 @@ const LeadFormPage = () => {
 
                 //success msges
                 setInputs(defaultInputs);
-                alert("Submitted! Thank you for making appointment. We will contact you ASAP.");
                 setErrorCheckable(false);
+                enqueueSnackbar(
+                    'Submitted! Thank you for your inquiry. We will contact you ASAP.', 
+                    { variant: 'success'}
+                );
             }
         };
 

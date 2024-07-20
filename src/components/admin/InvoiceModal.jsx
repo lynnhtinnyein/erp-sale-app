@@ -24,6 +24,7 @@ const InvoiceModal = ({
     onClose,
     onSendEmail,
     data,
+    showActionButtons = true
 }) => {
 
     if(!data) return null;
@@ -223,32 +224,34 @@ const InvoiceModal = ({
                 </Box>
 
                 {/* buttons */}
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    className="space-x-5"
-                    ref={footerActionButtonsRef}
-                    marginTop={5}
-                >
-                    <Button
-                        variant="contained"
-                        onClick={() => onSendEmail(data.id)}
-                        size="large"
-                        startIcon={<Email/>}
+                { showActionButtons ? (
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        className="space-x-5"
+                        ref={footerActionButtonsRef}
+                        marginTop={5}
                     >
-                        Send Email
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={print}
-                        color="inherit"
-                        size="large"
-                        startIcon={<Print/>}
-                    >
-                        Print
-                    </Button>
-                </Box>
+                        <Button
+                            variant="contained"
+                            onClick={() => onSendEmail(data.id)}
+                            size="large"
+                            startIcon={<Email/>}
+                        >
+                            Send Email
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={print}
+                            color="inherit"
+                            size="large"
+                            startIcon={<Print/>}
+                        >
+                            Print
+                        </Button>
+                    </Box>
+                ) : ''}
             </Box>
         </Dialog>
     );
