@@ -1,5 +1,5 @@
 import { ChevronLeft } from "@mui/icons-material";
-import { IconButton, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { IconButton, ListItem, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { dashboardDrawerRoutes as routes } from "../../../../router"
 import { useMemo } from "react";
@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const NavDrawer = ({ show, onClose }) => {
-    const { isMobile } = useSelector( state => state.ui );
+    const { isMobile, theme } = useSelector( state => state.ui );
     const location = useLocation();
     const navigate = useNavigate();
     
@@ -33,20 +33,21 @@ const NavDrawer = ({ show, onClose }) => {
                 width={230}
                 zIndex={9998}
                 left={show ? 0 : -230}
-                backgroundColor="white"
                 display="flex"
                 flexDirection="column"
                 className="shadow"
                 sx={{
                     transition: "left 300ms",
                 }}
+                component={Paper}
+                square
             >
                 <Box
                     display="flex"
                     flexDirection="row"
                     alignItems="center"
                     borderBottom={1}
-                    borderColor="#e5e7eb"
+                    borderColor={ theme === 'light' ? 'lightgray' : 'black '}
                     justifyContent="space-between"
                     padding="0.5rem"
                 >

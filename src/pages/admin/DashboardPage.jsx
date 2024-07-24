@@ -60,6 +60,7 @@ const DashboardPage = () => {
                 flexDirection="row"
                 justifyContent="center"
                 flexWrap="wrap"
+                paddingTop={1}
             >
                 { dashboardItems.map( item =>
                     <DashboardItem

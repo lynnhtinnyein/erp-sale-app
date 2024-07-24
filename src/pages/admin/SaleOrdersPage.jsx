@@ -23,7 +23,7 @@ const ActionButton = ({
             icon: null,
             color: 'success',
             text: 'Confirm And Deliver',
-            action: () => onConfirmOrder(order.id)
+            action: () => onConfirmOrder(order)
         },
         'delivered': {
             icon: <Send/>,
@@ -71,7 +71,7 @@ const SaleOrdersPage = () => {
     const fetchSaleOrders = (id) => {
         const url = id ? `sale_orders/${id}` : 'sale_orders';
         const res = DB.get(url);
-        setSaleOrders(id ? [res] : res);
+        setSaleOrders(res ? (id ? [res] : res) : []);
     }
 
     useEffect( () => {
@@ -83,11 +83,19 @@ const SaleOrdersPage = () => {
             setModalTargetItem(saleOrder);
         }
 
-        const confirmOrder = (saleOrderId) => {
-            DB.put(`sale_orders/${saleOrderId}`, {
+        const confirmOrder = (saleOrder) => {
+            DB.put(`sale_orders/${saleOrder.id}`, {
                 status: 'delivered',
                 deliveredDate: moment(),
             });
+
+            //update stock and date of product
+                const leftStock = DB.get(`inventory/${saleOrder.product.id}`).stock;
+                DB.put(`inventory/${saleOrder.product.id}`,{
+                    stock: leftStock - saleOrder.quantity,
+                    updatedAt: moment()
+                });
+
             fetchSaleOrders();
         }
 

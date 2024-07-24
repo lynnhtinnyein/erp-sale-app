@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Header from "./partials/Header";
 import NavDrawer from "./partials/NavDrawer";
+import { Paper } from "@mui/material";
 
 const DashboardPagesContainer = ({ children }) => {
     const [showNav, setShowNav] = useState(false);
@@ -29,6 +30,7 @@ const DashboardPagesContainer = ({ children }) => {
                 display="flex"
                 flexDirection="column"
                 overflow="hidden"
+                component={Paper}
             >
                 <Header toggleNav={setShowNav} />
                 <Box

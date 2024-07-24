@@ -8,6 +8,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import useLocalDB from "../../hooks/useLocalDB";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
+import { useSelector } from "react-redux";
 
 const CreateOrderModal = ({ 
     open, 
@@ -18,6 +19,7 @@ const CreateOrderModal = ({
     if(!data) return null;
 
     const DB = useLocalDB();
+    const { theme } = useSelector( state => state.ui );
     const [inputs, setInputs] = useState({
         customerName: data.name,
         customerPhone: data.phone,
@@ -84,7 +86,7 @@ const CreateOrderModal = ({
                     flexDirection="row"
                     justifyContent="space-between"
                     borderBottom={1}
-                    borderColor="lightgray"
+                    borderColor={ theme === 'light' ? 'lightgray' : 'black '}
                 >
                     <Box
                         display="flex"
@@ -192,7 +194,7 @@ const CreateOrderModal = ({
                     minHeight={45}
                     flexDirection="row"
                     borderTop={1}
-                    borderColor="lightgray"
+                    borderColor={ theme === 'light' ? 'lightgray' : 'black '}
                     paddingLeft={2}
                     paddingRight={2}
                     paddingBottom={2}

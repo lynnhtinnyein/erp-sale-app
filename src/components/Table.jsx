@@ -21,7 +21,6 @@ const Table = ({
             { isEmpty ? (
                 <Box
                     display="flex"
-                    backgroundColor="white"
                     alignItems="center"
                     justifyContent="center"
                     height={100}

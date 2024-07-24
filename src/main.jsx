@@ -14,7 +14,7 @@ const snackbarProps = {
         horizontal: 'right'
     },
     autoHideDuration: 3000
-} 
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>

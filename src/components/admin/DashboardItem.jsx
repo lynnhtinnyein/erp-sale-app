@@ -1,7 +1,6 @@
-import { Inventory } from "@mui/icons-material";
-import { Icon, Paper, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { Fragment, memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +11,7 @@ const DashboardItem = ({
     count,
     path
 }) => {
-
-    const { screenSize } = useSelector( state => state.ui );
+    const { screenSize, theme } = useSelector( state => state.ui );
     const navigate = useNavigate();
 
     const width = useMemo( () => {
@@ -57,9 +55,9 @@ const DashboardItem = ({
                 flexDirection="column"
                 overflow="hidden"
                 margin={2}
-                backgroundColor="white"
-                component={Paper}
-                className="cursor-pointer active:scale-95"
+                className={`cursor-pointer shadow-md active:scale-95 rounded ${
+                    theme === 'light' ? 'bg-white shadow-gray-300 ' : 'bg-zinc-700 shadow-black'
+                }`}
                 onClick={handleOnClick}
             >
                 <Box
@@ -67,7 +65,7 @@ const DashboardItem = ({
                     alignItems="center"
                     padding={2}
                     borderBottom={1}
-                    borderColor="lightgray"
+                    borderColor={ theme === 'light' ? 'lightgray' : 'black '}
                     height={50}
                 >
                     <Typography color={color} variant="h6" fontWeight="bold">

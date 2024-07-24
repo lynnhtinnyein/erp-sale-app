@@ -1,31 +1,37 @@
 import React from "react";
 import { Box } from "@mui/system";
-import { Button, IconButton } from "@mui/material";
+import { Button, ButtonGroup, IconButton, Paper } from "@mui/material";
 import { Logout, Menu } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../../store/reducers/authReducer";
+import { setTheme } from "../../../../store/reducers/uiReducer";
 
 const Header = ({ toggleNav }) => {
+    const { theme } = useSelector( state => state.ui );
     const dispatch = useDispatch();
-    
+
     const submitLogout = () => {
         dispatch(logout());
+    }
+
+    const changeTheme = (newTheme) => {
+        dispatch(setTheme(newTheme))
     }
 
     return (
         <Box
             display="flex"
             flexDirection="row"
-            justifyContent="space-between"
             minHeight={50}
             borderBottom={1}
-            borderColor="lightgray"
-            backgroundColor="white"
+            borderColor={ theme === 'light' ? 'lightgray' : 'black '}
+            className="py-2"
         >
             <Box
                 display="flex"
                 justifyContent="start"
                 alignItems="center"
+                className="w-1/3"
             >
                 <Box marginLeft="0.5rem">    
                     <IconButton 
@@ -35,10 +41,36 @@ const Header = ({ toggleNav }) => {
                     </IconButton>
                 </Box>
             </Box>
+            
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                className="w-1/3"
+            >
+                <ButtonGroup
+                    color={ theme === 'light' ? 'info' : 'warning'}
+                >
+                    <Button
+                        onClick={() => changeTheme('light')}
+                        variant={theme === 'light' ? 'contained' : 'outlined'}
+                    >
+                        Light
+                    </Button>
+                    <Button
+                        onClick={() => changeTheme('dark')}
+                        variant={theme === 'dark' ? 'contained' : 'outlined'}
+                    >
+                        Dark
+                    </Button>
+                </ButtonGroup>
+            </Box>
+
             <Box
                 display="flex"
                 justifyContent="end"
                 alignItems="center"
+                className="w-1/3"
             >
                 <Box marginRight="0.5rem">
                     <Button 
