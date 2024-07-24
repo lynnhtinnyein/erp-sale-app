@@ -23,14 +23,14 @@ const useDateParser = () => {
     
         getTime = (dateString) => {
             const dateObj = new Date(moment.utc(dateString, 'YYYY-MM-DD HH:mm:ss'));
-    
-            let hour = dateObj.getHours();
-            let minute = dateObj.getMinutes();
-    
-            hour = hour === 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-            minute = minute < 10 ? '0' + minute : minute;
-            const period = hour < 12 ? 'AM' : 'PM';
-    
+        
+            const rawHour = dateObj.getHours();
+            const hour = rawHour === 0 ? 12 : (rawHour > 12 ? rawHour - 12 : rawHour);
+            
+            const minute = dateObj.getMinutes();
+
+            const period = rawHour < 12 ? 'AM' : 'PM';
+
             return `${hour}:${minute} ${period}`;
         } 
     

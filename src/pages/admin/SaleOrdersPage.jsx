@@ -70,7 +70,8 @@ const SaleOrdersPage = () => {
 
     const fetchSaleOrders = (id) => {
         const url = id ? `sale_orders/${id}` : 'sale_orders';
-        setSaleOrders(DB.get(url));
+        const res = DB.get(url);
+        setSaleOrders(id ? [res] : res);
     }
 
     useEffect( () => {
@@ -131,6 +132,12 @@ const SaleOrdersPage = () => {
             fetchSaleOrders();
         }
 
+        const handleOnKeyUp = (event) => {
+            if(event.key === 'Enter'){
+                fetchSaleOrders(orderId);
+            }
+        }
+
     return (
         <>
             <Box
@@ -174,6 +181,7 @@ const SaleOrdersPage = () => {
                         label="Search By Order ID"
                         value={orderId}
                         onChange={handleOrderIdChange}
+                        onKeyUp={handleOnKeyUp}
                     />
                     <Button
                         variant="contained"

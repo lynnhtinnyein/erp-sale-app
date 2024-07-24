@@ -8,7 +8,7 @@ const useLocalDB = () => {
             const id = parts[1];
             
             const data = JSON.parse(localStorage.getItem(table)) || [];
-            return id ? data.filter( e => e.id.toString() === id) : data
+            return id ? data.find( e => e.id.toString() === id) : data
         }
         
         post(table, newData){
